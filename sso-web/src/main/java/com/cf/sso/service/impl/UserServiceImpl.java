@@ -1,0 +1,106 @@
+package com.cf.sso.service.impl;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
+
+import com.alibaba.fastjson.JSON;
+import com.cf.mapper.UserMapper;
+import com.cf.pojo.User;
+import com.cf.sso.dao.JedisClient;
+import com.cf.sso.service.UserService;
+import com.cf.utils.CookieUtils;
+import com.cf.utils.JsonUtils;
+import com.cf.utils.Result;
+
+
+@Service
+public class UserServiceImpl implements UserService {
+
+	@Autowired
+	private UserMapper userMapper;
+	@Autowired
+	private JedisClient jedisClient;
+	
+	@Override
+	public Result checkData(String context, Integer type) {
+		//构造查询条件
+		User user = new User();
+		if (type == 1) {
+			user.setUsername(context);
+		} else if (type == 2) {
+			user.setPhone(context);
+		}
+		
+		List<User> result = userMapper.selectByCondition(user);
+		if (result == null || result.size() == 0) {
+			return Result.ok(true);
+		}
+		return Result.ok(false);
+	}
+
+	@Override
+	public Result createUser(User user) {
+		user.setCreated(new Date());
+		user.setUpdated(new Date());
+		user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
+		userMapper.insert(user);
+		
+		return Result.ok();
+	}
+
+	@Override
+	public Result userLogin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
+		User user = new User();
+		user.setUsername(username);
+		List<User> list = userMapper.selectByCondition(user);
+		if (list == null || list.size() == 0) {
+			return Result.build(400, "用户名或密码错误");
+		}
+		User result = list.get(0);
+		if (!DigestUtils.md5DigestAsHex(password.getBytes()).equals(result.getPassword())) {
+			return Result.build(400, "用户名或密码错误");
+		}
+		
+		// 验证通过的场合
+		String token = UUID.randomUUID().toString();
+		result.setPassword(null);
+		jedisClient.set("USER_SESSION_KEY" + ":" + token, JsonUtils.objectToJson(result));
+		jedisClient.expire("USER_SESSION_KEY" + ":" + token, 900);
+		
+		// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效
+		CookieUtils.setCookie(request, response, "SSO_TOKEN", token);
+		
+		return Result.ok(token);
+	}
+
+	@Override
+	public Result getUserByToken(String token) {
+		String json = jedisClient.get("USER_SESSION_KEY" + ":" + token);
+		if (StringUtils.isBlank(json)) {
+			return Result.build(400, "此session已经过期，请重新登录");
+		}
+		
+		jedisClient.expire("USER_SESSION_KEY" + ":" + token, 900);
+		
+		return Result.ok(JsonUtils.jsonToPojo(json, User.class));
+	}
+
+	@Override
+	public Result userLogout(String token) {
+		long delCnt = jedisClient.del("USER_SESSION_KEY" + ":" + token);
+		if (delCnt == 0) {
+			return Result.build(400, "此session无效，无法登出");
+		}
+		return Result.ok();
+	}
+
+}

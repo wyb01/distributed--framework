@@ -13,6 +13,11 @@ import com.alibaba.fastjson.JSON;
 import com.cf.pojo.User;
 import com.cf.rest.service.RestService;
 
+/**
+* @Description: Restful服务
+* @Author: wyb
+* @Date: 2019-11-13 10:25:20
+*/
 @Controller
 public class RestController {
 
@@ -20,8 +25,7 @@ public class RestController {
 	private RestService restService;
 	
 	/**
-	 * 查询操作 REST风格 : /user/用户id
-	 * 
+	 * "查询"操作 REST风格 : /user/用户id
 	 */
 	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE + ";charset=utf-8")
 	@ResponseBody
@@ -29,61 +33,48 @@ public class RestController {
 		User user = restService.selectByPrimaryKey(id);
 		String result = JSON.toJSONString(user);
 		System.out.println("---------------------------get:" + result);
-		
 		return result;
 	}
 	
 	/**
-	 * 创建操作 REST风格
-	 * 
+	 * "创建"操作 REST风格
 	 */
 	@RequestMapping(value = "/user/register", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE + ";charset=utf-8")
 	@ResponseBody
 	public String register(User user) {
-
 		String result = JSON.toJSONString(user);
 		System.out.println("---------------------------Post:" + result);
-		
 		return result;
 	}
 	
 	/**
-	 * 删除操作 REST风格
-	 * 
+	 * "删除"操作 REST风格
 	 */
 	@RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public String delete(@PathVariable("id") Long id) {
-
 		System.out.println("---------------------------delete:" + id);
-		
 		return "delete";
 	}
 	
 	/**
-	 * 更新操作 REST风格
-	 * 
+	 * "更新"操作 REST风格
 	 */
 	@RequestMapping(value = "/user/update", method = RequestMethod.PUT)
 	@ResponseBody
 	public String update(User user) {
-
 		String result = JSON.toJSONString(user);
 		System.out.println("---------------------------Put:" + result);
-		
 		return result;
 	}
 	
 	/**
 	 * 传统风格 : /user?name户zhangsan&age=18
-	 * 
 	 */
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	@ResponseBody
 	public String search(@RequestParam("name") String queryString) {
-		
 		System.out.println("---------------------------get:" + queryString);
-		
 		return queryString;
 	}
 }

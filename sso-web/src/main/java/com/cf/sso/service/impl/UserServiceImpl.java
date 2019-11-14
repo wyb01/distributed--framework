@@ -1,18 +1,5 @@
 package com.cf.sso.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
-
-import com.alibaba.fastjson.JSON;
 import com.cf.mapper.UserMapper;
 import com.cf.pojo.User;
 import com.cf.sso.dao.JedisClient;
@@ -20,6 +7,16 @@ import com.cf.sso.service.UserService;
 import com.cf.utils.CookieUtils;
 import com.cf.utils.JsonUtils;
 import com.cf.utils.Result;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -57,11 +54,18 @@ public class UserServiceImpl implements UserService {
 		return Result.ok();
 	}
 
+	/**
+	 * @Description: 用户登录
+	 * @param token:
+	 * @Return com.cf.utils.Result
+	 * @Author: wyb
+	 * @Date: 2019-11-14 14:18:05
+	 */
 	@Override
 	public Result userLogin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
 		User user = new User();
 		user.setUsername(username);
-		List<User> list = userMapper.selectByCondition(user);
+		List<User> list = userMapper.selectByCondition(user); //数据库查询用户是否存在
 		if (list == null || list.size() == 0) {
 			return Result.build(400, "用户名或密码错误");
 		}
@@ -71,10 +75,10 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		// 验证通过的场合
-		String token = UUID.randomUUID().toString();
-		result.setPassword(null);
+		String token = UUID.randomUUID().toString();  //生成token
+		result.setPassword(null);  //密码不保存到redis
 		jedisClient.set("USER_SESSION_KEY" + ":" + token, JsonUtils.objectToJson(result));
-		jedisClient.expire("USER_SESSION_KEY" + ":" + token, 900);
+		jedisClient.expire("USER_SESSION_KEY" + ":" + token, 900);   //过期时间
 		
 		// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效
 		CookieUtils.setCookie(request, response, "SSO_TOKEN", token);
@@ -84,19 +88,19 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Result getUserByToken(String token) {
-		String json = jedisClient.get("USER_SESSION_KEY" + ":" + token);
+		String json = jedisClient.get("USER_SESSION_KEY" + ":" + token); //redis查询key
 		if (StringUtils.isBlank(json)) {
 			return Result.build(400, "此session已经过期，请重新登录");
 		}
 		
-		jedisClient.expire("USER_SESSION_KEY" + ":" + token, 900);
+		jedisClient.expire("USER_SESSION_KEY" + ":" + token, 900); //重新设置过期时间
 		
 		return Result.ok(JsonUtils.jsonToPojo(json, User.class));
 	}
 
 	@Override
 	public Result userLogout(String token) {
-		long delCnt = jedisClient.del("USER_SESSION_KEY" + ":" + token);
+		long delCnt = jedisClient.del("USER_SESSION_KEY" + ":" + token);  //删除key
 		if (delCnt == 0) {
 			return Result.build(400, "此session无效，无法登出");
 		}

@@ -34,7 +34,7 @@
 
 	<!-- 单机版配置 -->
 	<bean id="redisClient" class="redis.clients.jedis.JedisPool">
-		<constructor-arg name="host" value="192.168.241.128"></constructor-arg>
+		<constructor-arg name="host" value="120.79.178.18"></constructor-arg>
 		<constructor-arg name="port" value="6379"></constructor-arg>
 		<constructor-arg name="poolConfig" ref="jedisPoolConfig"></constructor-arg>
 	</bean>

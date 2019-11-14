@@ -13,26 +13,29 @@ import java.util.HashSet;
 public class JedisTest {
 
 	/**
-	 * 单机版测试
-	 *
-	 */
+	* @Description: 单机版测试
+	* @Return void
+	* @Author: wyb
+	* @Date: 2019-11-14 11:17:48
+	*/
 	@Test
 	public void testJedisSingle() {
 		// 创建一个jedis对象
-		Jedis jedis = new Jedis("120.79.178.18", 6379);
+		Jedis jedis = new Jedis("120.79.178.18", 7003);
 		// 调用jedis对象的方法，方法名称和redis命令一致
 		jedis.set("key1", "jedis test");
 		String result = jedis.get("key1");
-
 		System.out.println(result);
 		// 关闭jedis
 		jedis.close();
 	}
 
 	/**
-	 * 单机版测试
-	 *
-	 */
+	* @Description: 单机版测试
+	* @Return void
+	* @Author: wyb
+	* @Date: 2019-11-14 11:17:38
+	*/
 	@Test
 	public void testJedisPool() {
 		JedisPool pool = new JedisPool("120.79.178.18", 6379);
@@ -51,8 +54,11 @@ public class JedisTest {
 	}
 
 	/**
-	 * 集群测试
-	 */
+	* @Description: 集群测试
+	* @Return void
+	* @Author: wyb
+	* @Date: 2019-11-14 11:18:01
+	*/
 	@Test
 	public void testJedisCluster() {
 		HashSet<HostAndPort> nodes = new HashSet<>();
@@ -64,47 +70,42 @@ public class JedisTest {
 		nodes.add(new HostAndPort("120.79.178.18", 7006));
 
 		JedisCluster cluster = new JedisCluster(nodes);
-
 		cluster.set("clusterKey", "1000");
-
 		String result = cluster.get("clusterKey");
 		System.out.println(result);
 		cluster.close();
 	}
 
-
 	/**
-	 * spring与redis单机版测试
-	 *
-	 */
+	* @Description: spring与redis单机版测试
+	* @Return void
+	* @Author: wyb
+	* @Date: 2019-11-14 11:13:46
+	*/
 	@Test
 	public void testSpringJedisSingle() {
 		ApplicationContext app = new ClassPathXmlApplicationContext("classpath:spring/applicationContext-*.xml");
-
 		JedisPool pool = (JedisPool) app.getBean("redisClient");
-
 		// 创建一个jedis对象
 		Jedis jedis = pool.getResource();
 		// 调用jedis对象的方法，方法名称和redis命令一致
 		String result = jedis.get("key2");
-
 		System.out.println(result);
 		// 关闭jedis
 		jedis.close();
-
 		pool.close();
 	}
 
 	/**
-	 * spring与redis集群版测试
-	 *
-	 */
+	* @Description: spring与redis集群版测试
+	* @Return void
+	* @Author: wyb
+	* @Date: 2019-11-14 11:13:21
+	*/
 	@Test
 	public void testSpringJedisCluster() {
 		ApplicationContext app = new ClassPathXmlApplicationContext("classpath:spring/applicationContext-*.xml");
-
 		JedisCluster cluster = (JedisCluster)app.getBean("redisClient");
-
 		cluster.hdel("UserInfo", "1");
 		String result = cluster.get("clusterKey");
 		System.out.println(result);

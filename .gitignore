@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+/.idea/
+*.iml
+/restful-web/target/
+/portal-web/target/
+/config/config-service/target/
+/config/config-web/target/
+/config/config-pojo/target/
+/config/config-mapper/target/
+/common/target/
+/sso-web/target/

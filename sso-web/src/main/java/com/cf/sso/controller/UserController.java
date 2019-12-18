@@ -1,10 +1,8 @@
 package com.cf.sso.controller;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.cf.pojo.User;
+import com.cf.sso.service.UserService;
+import com.cf.utils.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -14,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cf.pojo.User;
-import com.cf.sso.service.UserService;
-import com.cf.utils.Result;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Controller
 public class UserController {
@@ -31,7 +29,8 @@ public class UserController {
 		System.out.println("checkdata-------------------" + result);
 		return result;
 	}
-	
+
+	//用户注册
 	@RequestMapping(value = "user/register", method = RequestMethod.POST)
 	@ResponseBody
 	public Result createUser(User user) {
@@ -48,6 +47,14 @@ public class UserController {
 		return result;
 	}
 	
+	/**
+	* @Description: 
+	* @param token: 登录跳转到首页后，显示用户名等信息
+	* @param callback: 
+	* @Return java.lang.Object
+	* @Author: wyb
+	* @Date: 2019-11-14 14:28:58       
+	*/
 	@RequestMapping(value = "user/token/{token}", method = RequestMethod.GET)
 	@ResponseBody
 	public Object getUserByToken(@PathVariable("token") String token, String callback) {
@@ -63,7 +70,16 @@ public class UserController {
 			return mappingJackson;
 		}		
 	}
-	
+
+	/**
+	* @Description: 退出登录
+	* @param token:
+	* @param request:
+	* @param response:
+	* @Return void
+	* @Author: wyb
+	* @Date: 2019-11-14 14:29:36
+	*/
 	@RequestMapping(value = "user/logout/{token}", method = RequestMethod.GET)
 	@ResponseBody
 	public void logout(@PathVariable("token") String token, HttpServletRequest request, HttpServletResponse response) throws IOException {

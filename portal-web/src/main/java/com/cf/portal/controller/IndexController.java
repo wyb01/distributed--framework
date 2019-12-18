@@ -18,7 +18,15 @@ public class IndexController {
 	public String shouIndex() {
 		return "index";
 	}
-	
+
+	/**
+	* @Description: 通过HttpClient访问restful-web(8082)服务获取数据
+	* @param id:
+	* @Return java.lang.String
+	* @Author: wyb
+	* @Date: 2019-11-13 11:51:57
+	 * 访问示例：http://localhost:8083/get?id=1
+	*/
 	@RequestMapping("/get")
 	@ResponseBody
 	public String get(@RequestParam("id") Long id) {

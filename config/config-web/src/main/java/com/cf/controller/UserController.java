@@ -11,13 +11,13 @@ import com.cf.service.UserService;
 
 @Controller
 public class UserController {
+
 	@Autowired
 	private UserService userService;
 	
 	@RequestMapping("/user/{id}")
 	@ResponseBody
 	public User getUserById(@PathVariable Long id) {
-		
 		User user = userService.selectByPrimaryKey(id);
 		return user;
 	}

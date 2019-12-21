@@ -13,7 +13,7 @@ import java.util.HashSet;
 public class JedisTest {
 
 	/**
-	* @Description: 单机版测试
+	* @Description: 单机版测试1
 	* @Return void
 	* @Author: wyb
 	* @Date: 2019-11-14 11:17:48
@@ -31,30 +31,27 @@ public class JedisTest {
 	}
 
 	/**
-	* @Description: 单机版测试
+	* @Description: 单机版测试2（连接池）
 	* @Return void
 	* @Author: wyb
 	* @Date: 2019-11-14 11:17:38
 	*/
 	@Test
 	public void testJedisPool() {
-		JedisPool pool = new JedisPool("120.79.178.18", 6379);
-
+		JedisPool pool = new JedisPool("120.79.178.18", 6379);  //jedis连接池
 		// 创建一个jedis对象
 		Jedis jedis = pool.getResource();
 		// 调用jedis对象的方法，方法名称和redis命令一致
 		jedis.set("key2", "jedis test");
 		String result = jedis.get("key2");
-
 		System.out.println(result);
 		// 关闭jedis
 		jedis.close();
-
 		pool.close();
 	}
 
 	/**
-	* @Description: 集群测试
+	* @Description: redis集群测试
 	* @Return void
 	* @Author: wyb
 	* @Date: 2019-11-14 11:18:01
@@ -77,7 +74,7 @@ public class JedisTest {
 	}
 
 	/**
-	* @Description: spring与redis单机版测试
+	* @Description: spring与redis"单机版"测试
 	* @Return void
 	* @Author: wyb
 	* @Date: 2019-11-14 11:13:46
@@ -85,11 +82,9 @@ public class JedisTest {
 	@Test
 	public void testSpringJedisSingle() {
 		ApplicationContext app = new ClassPathXmlApplicationContext("classpath:spring/applicationContext-*.xml");
-		JedisPool pool = (JedisPool) app.getBean("redisClient");
-		// 创建一个jedis对象
-		Jedis jedis = pool.getResource();
-		// 调用jedis对象的方法，方法名称和redis命令一致
-		String result = jedis.get("key2");
+		JedisPool pool = (JedisPool) app.getBean("redisClient");  //在容器中获取bean
+		Jedis jedis = pool.getResource();  // 创建一个jedis对象
+		String result = jedis.get("key2"); // 调用jedis对象的方法，方法名称和redis命令一致
 		System.out.println(result);
 		// 关闭jedis
 		jedis.close();
@@ -97,7 +92,7 @@ public class JedisTest {
 	}
 
 	/**
-	* @Description: spring与redis集群版测试
+	* @Description: spring与redis"集群版"测试
 	* @Return void
 	* @Author: wyb
 	* @Date: 2019-11-14 11:13:21

@@ -40,3 +40,4 @@
 /config/config-mapper/target/
 /common/target/
 /sso-web/target/
+/.idea/workspace.xml

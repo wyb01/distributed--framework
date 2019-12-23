@@ -38,7 +38,17 @@ public class UserController {
 		System.out.println("createUser-------------------" + result);
 		return result;
 	}
-	
+
+	/**
+	 * description: 登录
+	 * @param username
+	 * @param password
+	 * @param request
+	 * @param response:
+	 * @return: com.cf.utils.Result
+	 * @author: wyb
+	 * @createTime: 2019-12-23 23:20:54
+	 */
 	@RequestMapping(value = "user/login", method = RequestMethod.POST)
 	@ResponseBody
 	public Result userLogin(String username, String password, HttpServletRequest request, HttpServletResponse response) {

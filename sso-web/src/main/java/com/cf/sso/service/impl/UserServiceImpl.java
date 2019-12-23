@@ -36,7 +36,6 @@ public class UserServiceImpl implements UserService {
 		} else if (type == 2) {
 			user.setPhone(context);
 		}
-		
 		List<User> result = userMapper.selectByCondition(user);
 		if (result == null || result.size() == 0) {
 			return Result.ok(true);
@@ -44,13 +43,19 @@ public class UserServiceImpl implements UserService {
 		return Result.ok(false);
 	}
 
+	/**
+	 * description: 创建用户
+	 * @param user:
+	 * @return: com.cf.utils.Result
+	 * @author: wyb
+	 * @createTime: 2019-12-23 22:47:11
+	 */
 	@Override
 	public Result createUser(User user) {
 		user.setCreated(new Date());
 		user.setUpdated(new Date());
 		user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
 		userMapper.insert(user);
-		
 		return Result.ok();
 	}
 
@@ -73,7 +78,6 @@ public class UserServiceImpl implements UserService {
 		if (!DigestUtils.md5DigestAsHex(password.getBytes()).equals(result.getPassword())) {
 			return Result.build(400, "用户名或密码错误");
 		}
-		
 		// 验证通过的场合
 		String token = UUID.randomUUID().toString();  //生成token
 		result.setPassword(null);  //密码不保存到redis
@@ -82,22 +86,33 @@ public class UserServiceImpl implements UserService {
 		
 		// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效
 		CookieUtils.setCookie(request, response, "SSO_TOKEN", token);
-		
 		return Result.ok(token);
 	}
 
+	/**
+	 * description: 根据token获取用户
+	 * @param token:
+	 * @return: com.cf.utils.Result
+	 * @author: wyb
+	 * @createTime: 2019-12-23 22:46:47
+	 */
 	@Override
 	public Result getUserByToken(String token) {
 		String json = jedisClient.get("USER_SESSION_KEY" + ":" + token); //redis查询key
 		if (StringUtils.isBlank(json)) {
 			return Result.build(400, "此session已经过期，请重新登录");
 		}
-		
 		jedisClient.expire("USER_SESSION_KEY" + ":" + token, 900); //重新设置过期时间
-		
 		return Result.ok(JsonUtils.jsonToPojo(json, User.class));
 	}
 
+	/**
+	 * description: 退出登录
+	 * @param token: token
+	 * @return: com.cf.utils.Result
+	 * @author: wyb
+	 * @createTime: 2019-12-23 22:46:31
+	 */
 	@Override
 	public Result userLogout(String token) {
 		long delCnt = jedisClient.del("USER_SESSION_KEY" + ":" + token);  //删除key

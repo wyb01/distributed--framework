@@ -38,4 +38,12 @@
         Mysql
         redis
         
+      
+      
+   首先访问，正常：
+    http://localhost:8083/index
+    然后访问需要登录页面，localhost:8083/my/mypage
+    跳转到单点登录页面：
+    http://localhost:8085/sso/login?redirect=http://localhost:8083/my/mypages
+        
     

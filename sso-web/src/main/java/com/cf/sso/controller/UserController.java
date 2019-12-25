@@ -21,7 +21,15 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	
+
+	/**
+	* @Description: 校验"用户名"和"手机号"是否被占用
+	* @param param:
+	* @param type:
+	* @Return: com.cf.utils.Result
+	* @Author: wyb
+	* @Date: 2019-12-25 10:59:37
+	*/
 	@RequestMapping(value = "user/check/{param}/{type}", method = RequestMethod.GET)
 	@ResponseBody
 	public Result checkData(@PathVariable("param") String param, @PathVariable("type") Integer type) {
@@ -68,7 +76,7 @@ public class UserController {
 	@RequestMapping(value = "user/token/{token}", method = RequestMethod.GET)
 	@ResponseBody
 	public Object getUserByToken(@PathVariable("token") String token, String callback) {
-		Result result = userService.getUserByToken(token);
+		Result result = userService.getUserByToken(token);   //从redis中获取token
 		System.out.println("getUserByToken-------------------" + result);
 		
 		if (StringUtils.isBlank(callback)) {

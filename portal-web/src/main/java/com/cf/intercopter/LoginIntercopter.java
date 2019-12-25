@@ -11,6 +11,11 @@ import com.cf.pojo.User;
 import com.cf.portal.service.UserService;
 import com.cf.utils.CookieUtils;
 
+/**
+* @Description: 自定义拦截器
+* @Author: wyb
+* @Date: 2019-12-25 10:07:57
+*/
 public class LoginIntercopter implements HandlerInterceptor {
 
 	@Autowired
@@ -18,22 +23,20 @@ public class LoginIntercopter implements HandlerInterceptor {
 	@Override
 	public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, Exception arg3)
 			throws Exception {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, ModelAndView arg3)
 			throws Exception {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		// 判断cookie是否存在
 		String token = CookieUtils.getCookieValue(request, "SSO_TOKEN");
-		User user = userService.getUserByToken(token);
+		User user = userService.getUserByToken(token);  //sso-web中查询获取用户
 		if (user == null) {
 			response.sendRedirect("http://localhost:8085/sso/login" + "?redirect=" + request.getRequestURL());
 			return false;

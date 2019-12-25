@@ -26,7 +26,15 @@ public class UserServiceImpl implements UserService {
 	private UserMapper userMapper;
 	@Autowired
 	private JedisClient jedisClient;
-	
+
+	/**
+	* @Description: 校验"用户名"和"手机号"是否被占用
+	* @param context:
+	* @param type:
+	* @Return: com.cf.utils.Result
+	* @Author: wyb
+	* @Date: 2019-12-25 10:48:31
+	*/
 	@Override
 	public Result checkData(String context, Integer type) {
 		//构造查询条件

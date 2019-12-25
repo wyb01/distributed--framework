@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 	/**
 	* @Description: 校验"用户名"和"手机号"是否被占用
 	* @param context:
-	* @param type:
+	* @param type: 1:手机号 2"用户名
 	* @Return: com.cf.utils.Result
 	* @Author: wyb
 	* @Date: 2019-12-25 10:48:31
@@ -88,8 +88,8 @@ public class UserServiceImpl implements UserService {
 		}
 		// 验证通过的场合
 		String token = UUID.randomUUID().toString();  //生成token
-		result.setPassword(null);  //密码不保存到redis
-		jedisClient.set("USER_SESSION_KEY" + ":" + token, JsonUtils.objectToJson(result));
+		result.setPassword(null);  					  //密码不保存到redis
+		jedisClient.set("USER_SESSION_KEY" + ":" + token, JsonUtils.objectToJson(result)); //用户信息存入redis
 		jedisClient.expire("USER_SESSION_KEY" + ":" + token, 900);   //过期时间
 		
 		// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效

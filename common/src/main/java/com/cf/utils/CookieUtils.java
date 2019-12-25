@@ -143,7 +143,7 @@ public final class CookieUtils {
             }
             Cookie cookie = new Cookie(cookieName, cookieValue);
             if (cookieMaxage > 0)
-                cookie.setMaxAge(cookieMaxage);
+                cookie.setMaxAge(cookieMaxage);  // cookie生效的最大秒数
             if (null != request) {// 设置域名的cookie
             	String domainName = getDomainName(request);
             	System.out.println(domainName);

@@ -38,12 +38,30 @@
         Mysql
         redis
         
-      
-      
-   首先访问，正常：
-    http://localhost:8083/index
+  Cookie的共享：
+    A、设置domain：比如 www.abc.com   sso.abc.com
+       需要设置domain为：.abc.com
+    C、设置path： /
+    像我们的demo都是localhost，则不需要设置domain，设置path为 / 即可
+    
+    在portal-web这个系统index.jsp页面中添加读取cookie的操作，页面加载时去读取cookie，并显示相应的用户信息。
+    
+    登陆成功后，生成token，并添加cookie
+    然后跳转到portal首页，portal的index页面取出cookie中的token进行再次请求，根据返回的数据获取username并显示
+    登出后，跳转到portal首页
+    
+    #目前我们已经实现了单点登录的登陆，其他系统也采用这种方式来获取token，为了更好地体现这个用户是否已经登录，我们来定制一些页面 
+    拦截url进行强制登录：
+        当用户访问"个人中心"页面的时候，进行url拦截，并强制登录。
+        
+    
+   首先访问portal首页，正常：
+    http://localhost:8083/index（portal登录时跳转到sso登录页面进行登录，登陆成功后跳转到portal首页）
     然后访问需要登录页面，localhost:8083/my/mypage
     跳转到单点登录页面：
     http://localhost:8085/sso/login?redirect=http://localhost:8083/my/mypages
+    登录成功后跳转到之前的页面：http://localhost:8083/my/mypage
+    
+    注意：目前只演示了把portal-web加入到单点登录系统中来进行统一登录，其他系统参考上述方法进行改造。
         
     

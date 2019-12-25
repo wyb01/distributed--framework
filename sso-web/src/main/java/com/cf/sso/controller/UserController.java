@@ -25,7 +25,7 @@ public class UserController {
 	/**
 	* @Description: 校验"用户名"和"手机号"是否被占用
 	* @param param:
-	* @param type:
+	* @param type: 1、手机号 2、用户名
 	* @Return: com.cf.utils.Result
 	* @Author: wyb
 	* @Date: 2019-12-25 10:59:37
@@ -38,11 +38,17 @@ public class UserController {
 		return result;
 	}
 
-	//用户注册
+	/**
+	* @Description: 用户注册
+	* @param user:
+	* @Return: com.cf.utils.Result
+	* @Author: wyb
+	* @Date: 2019-12-25 14:30:46
+	*/
 	@RequestMapping(value = "user/register", method = RequestMethod.POST)
 	@ResponseBody
 	public Result createUser(User user) {
-		Result result = userService.createUser(user);
+		Result result = userService.createUser(user); //创建用户，添加到mysql
 		System.out.println("createUser-------------------" + result);
 		return result;
 	}
@@ -60,6 +66,8 @@ public class UserController {
 	@RequestMapping(value = "user/login", method = RequestMethod.POST)
 	@ResponseBody
 	public Result userLogin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
+		//登陆成功后，生成token，并添加cookie
+		// 然后跳转到portal首页，portal的index页面取出cookie中的token进行再次请求，根据返回的数据获取username并显示
 		Result result = userService.userLogin(username, password, request, response);
 		System.out.println("userLogin-------------------" + result);
 		return result;
@@ -78,7 +86,6 @@ public class UserController {
 	public Object getUserByToken(@PathVariable("token") String token, String callback) {
 		Result result = userService.getUserByToken(token);   //从redis中获取token
 		System.out.println("getUserByToken-------------------" + result);
-		
 		if (StringUtils.isBlank(callback)) {
 			return result;
 		} else {
@@ -103,7 +110,7 @@ public class UserController {
 	public void logout(@PathVariable("token") String token, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Result result = userService.userLogout(token);
 		System.out.println("logout-------------------" + result);
-		
+		//登出后，跳转到portal首页
 		response.sendRedirect("http://localhost:8083/index");
 	}
 }

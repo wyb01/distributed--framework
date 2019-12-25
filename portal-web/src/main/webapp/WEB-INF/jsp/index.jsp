@@ -21,10 +21,11 @@
               function regist() {
                      return location.href = "http://localhost:8085/sso/register";
               }
-              
+
+              //页面加载时读取cookie信息，并显示用户信息
               var S = SSO = {
                       checkLogin : function(){
-                             var _ticket = $.cookie("SSO_TOKEN");
+                             var _ticket = $.cookie("SSO_TOKEN"); //获取cookie中存放的token
                              if(!_ticket){
                                     return ;
                              }

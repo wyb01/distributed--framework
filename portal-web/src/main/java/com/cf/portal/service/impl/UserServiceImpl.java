@@ -12,10 +12,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByToken(String token) {
-		
 		String json = HttpClientUtil.doGet("http://localhost:8085/user/token/" + token);
 		System.out.println("-------------------getUserByToken " + json);
-		
 		Result result = Result.formatToPojo(json, User.class);
 		if (result.getStatus() == 200) {
 			User user = (User)result.getData();

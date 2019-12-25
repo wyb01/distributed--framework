@@ -35,6 +35,12 @@ public class IndexController {
 		return result;
 	}
 	
+	/**
+	* @Description: 测试拦截
+	* @Return: java.lang.String
+	* @Author: wyb  
+	* @Date: 2019-12-25 16:08:17       
+	*/
 	@RequestMapping("/my/mypage")
 	public String mypage() {
 		return "mypage";

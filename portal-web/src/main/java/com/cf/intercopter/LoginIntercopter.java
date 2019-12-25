@@ -36,8 +36,8 @@ public class LoginIntercopter implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		// 判断cookie是否存在
 		String token = CookieUtils.getCookieValue(request, "SSO_TOKEN");
-		User user = userService.getUserByToken(token);  //sso-web中查询获取用户
-		if (user == null) {
+		User user = userService.getUserByToken(token);  //HttpClient  sso-web中查询获取用户
+		if (user == null) {   //用户未登录，跳转到sso登录页面，登录成功后，跳转到请求页面
 			response.sendRedirect("http://localhost:8085/sso/login" + "?redirect=" + request.getRequestURL());
 			return false;
 		}
